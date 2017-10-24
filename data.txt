@@ -1,3 +1,5 @@
+ID: String
+
 Content: {
     id,
     published,
@@ -27,7 +29,8 @@ ContentSearch: {
 
 MostReadSearch: {
     sliceType: None | Section | Tag,
-    range: DayRange | TimeRange
+    range: DayRange | TimeRange,
+    results: List[ID]
 }
 
 ContentSearch: {
@@ -36,19 +39,21 @@ ContentSearch: {
     query: String,
     slice: String,
     page: Int,
-    pages: Int
+    pages: Int,
+    results: List[ID]
 }
 
 SliceSearch: {
     query: String,
-    results: List[String]
+    results: List[ID]
 }
 
 Package: {
     id,
     title,
     lastModifiedTime,
-    lastModifiedBy
+    lastModifiedBy,
+    content: List[ID]
 }
 
 PackageSearch: {
@@ -57,8 +62,9 @@ PackageSearch: {
 }
 
 Root: {
-    items: List[Content]
+    content: List[Content]
     clipboard: List[ID]
     package: Package,
-    packageSearch: PackageSearch
+    packageSearch: PackageSearch,
+    contentSearch: ContentSearch | MostReadSearch
 }
