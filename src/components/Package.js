@@ -6,9 +6,14 @@ import { DragType } from '../model/constants';
 import { Content } from './Content';
 
 const packageEntryTarget = {
-    drop({ ix, onDrop }, monitor) {
-        const item = monitor.getItem();
-        onDrop(ix, item);
+    drop(props, monitor) {
+        const dragItem = monitor.getItem();
+
+        const sourceIx = dragItem.ix;
+        const destinationIx = props.ix;
+
+        console.log(`move from ${sourceIx} to ${destinationIx}`);
+        props.onDrop(destinationIx, dragItem.item);
     }
 }
 
@@ -21,7 +26,7 @@ function collect(connect, monitor) {
 function PackageEntryUnconnected({ ix, item, connectDropTarget }) {
     // TOTALLY LEGIT HACK! react-dnd only works with a native element at the top level 
     return connectDropTarget(<div className={`ui segment ${item ? "" : "tertiary"}`}>
-        {item ? <Content {...item} /> : false}
+        {item ? <Content ix={ix} item={item} /> : false}
     </div>);
 }
 
