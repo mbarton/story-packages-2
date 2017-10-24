@@ -16,8 +16,16 @@ class App extends Component {
     this.state = TEST_DATA;
   }
 
-  updatePackage = (p) => {
-    this.setState({ package: p });
+  updatePackage = (packageBefore) => {
+    // ensure there's a drop-zone at the end for
+    // stories that are just linking to the package
+    const content = packageBefore.content.slice();
+    if(content[content.length - 1] !== null) {
+      content.push(null);
+    }
+    
+    const packageAfter = Object.assign({}, packageBefore, { content });
+    this.setState({ package: packageAfter });
   }
 
   render() {

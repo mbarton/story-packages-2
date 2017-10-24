@@ -27,8 +27,6 @@ export const TEST_DATA = {
             null,
             null,
             null,
-            null,
-            null,
             null
         ]
     }
