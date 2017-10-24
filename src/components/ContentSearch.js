@@ -5,6 +5,6 @@ import { Content } from './Content';
 
 export function ContentSearch({ results }) {
     return <Item.Group divided>
-        {results.map(r => <Content {...r} />)}
+        {results.map(r => <Content key={r.id} {...r} />)}
     </Item.Group>;
 }

@@ -18,18 +18,18 @@ export const TEST_DATA = {
     },
     package: {
         content: [
-            content(1),
-            content(2),
-            content(3),
-            content(4),
-            content(5),
             null,
             null,
             null,
             null,
-            content(6),
-            content(7),
-            content(8)
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
         ]
     }
 }
