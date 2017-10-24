@@ -1,0 +1,64 @@
+Content: {
+    id,
+    published,
+    headline,
+    trailText,
+    tone,
+    scheduledTime,
+    publicationTime,
+    frontPublicationTime,
+    thumbnail,
+    contributorThumbnail
+}
+
+DayRange = Today | Yesterday | ${Today - 2} | ${Today - 3} | ... | ${Today - 7}
+TimeRange = 3 mins | 10 mins | 1 hour | 8 hours | 24 hours | 7 days
+
+ContentSearch: {
+    type: Draft | Live,
+    sliceType: None | Section | Tag
+    range: DayRange, 
+    orderBy: Newest | Relevance,
+    query: String,
+    slice: String,
+    page: Int,
+    pages: Int
+}
+
+MostReadSearch: {
+    sliceType: None | Section | Tag,
+    range: DayRange | TimeRange
+}
+
+ContentSearch: {
+    type: CAPI | MostRead,
+    sliceType: None | Section | Tag,
+    query: String,
+    slice: String,
+    page: Int,
+    pages: Int
+}
+
+SliceSearch: {
+    query: String,
+    results: List[String]
+}
+
+Package: {
+    id,
+    title,
+    lastModifiedTime,
+    lastModifiedBy
+}
+
+PackageSearch: {
+    text: String,
+    results: List[Package]
+}
+
+Root: {
+    items: List[Content]
+    clipboard: List[ID]
+    package: Package,
+    packageSearch: PackageSearch
+}
