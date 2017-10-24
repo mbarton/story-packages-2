@@ -6,7 +6,7 @@ import { DragType } from '../model/constants';
 
 const contentSource = {
     beginDrag({ item, ix }) {
-        return { item, ix };
+        return { item, ix: ix === undefined ? null : ix };
     }
 }
 

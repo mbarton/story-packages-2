@@ -5,15 +5,28 @@ import { DropTarget } from 'react-dnd';
 import { DragType } from '../model/constants';
 import { Content } from './Content';
 
+function handleEvent(props, monitor, alwaysInvoke, fn) {
+    const dragItem = monitor.getItem();
+
+    const sourceIx = dragItem.ix;
+    const destinationIx = props.ix;
+
+    if(sourceIx !== destinationIx && (alwaysInvoke || destinationIx !== dragItem.lastSeenIx)) {
+        fn(sourceIx, destinationIx, dragItem.item);
+    }
+
+    // use mutation to avoid repeated invocations
+    // see https://github.com/react-dnd/react-dnd/blob/master/examples/04%20Sortable/Simple/Card.js
+    dragItem.lastSeenIx = destinationIx;
+}
+
 const packageEntryTarget = {
     drop(props, monitor) {
-        const dragItem = monitor.getItem();
+        handleEvent(props, monitor, true, props.onDrop);
+    },
 
-        const sourceIx = dragItem.ix;
-        const destinationIx = props.ix;
-
-        console.log(`move from ${sourceIx} to ${destinationIx}`);
-        props.onDrop(destinationIx, dragItem.item);
+    hover(props, monitor, component) {
+        handleEvent(props, monitor, false, props.onHover);
     }
 }
 
@@ -32,30 +45,59 @@ function PackageEntryUnconnected({ ix, item, connectDropTarget }) {
 
 const PackageEntry = DropTarget(DragType.CONTENT, packageEntryTarget, collect)(PackageEntryUnconnected);
 
-export function Package({ size, thePackage, onChange }) {
-    const { content } = thePackage;
-    const indexed = content.map((c, i) => [c, i]);
-    
-    const included = indexed.slice(0, size);
-    const linkingTo = indexed.slice(size);
-
-    function onDrop(ix, newContent) {
-        const copy = content.slice();
-        copy[ix] = newContent;
-
-        onChange({ content: copy });
+export class Package extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = { content: props.content };
     }
 
-    return <div>
-        <Segment.Group raised>
-            {included.map(([item, ix]) =>
-                <PackageEntry key={ix} ix={ix} item={item} onDrop={onDrop} />
-            )}
-        </Segment.Group>
-        <Segment.Group raised>
-            {linkingTo.map(([item, ix]) =>
-                <PackageEntry key={ix} ix={ix} item={item} onDrop={onDrop} />
-            )}
-        </Segment.Group>
-    </div>;
+    componentWillReceiveProps({ content }) {
+        this.setState({ content });
+    }
+
+    onHover = (sourceIx, destinationIx, newContent) => {
+        if(sourceIx !== null) {
+            console.log(`move from ${sourceIx} to ${destinationIx}`);
+        } else {
+            console.log(`copy to ${destinationIx}`);
+        }
+    }
+
+    onDrop = (sourceIx, destinationIx, newContent) => {
+        const copy = this.props.thePackage.content.slice();
+        copy[destinationIx] = newContent;
+
+        if(sourceIx !== null) {
+            copy[sourceIx] = null;
+        }
+
+        this.props.onChange({ content: copy });
+    }
+
+    render() {
+        const { size, thePackage } = this.props;
+        const indexed = thePackage.content.map((c, i) => [c, i]);
+        
+        const included = indexed.slice(0, size);
+        const linkingTo = indexed.slice(size);
+
+        const buildPackageEntry = ([item, ix]) => {
+            return <PackageEntry
+                key={ix}
+                ix={ix}
+                item={item}
+                onHover={this.onHover}
+                onDrop={this.onDrop}
+            />;
+        }
+
+        return <div>
+            <Segment.Group raised>
+                {included.map(buildPackageEntry)}
+            </Segment.Group>
+            <Segment.Group raised>
+                {linkingTo.map(buildPackageEntry)}
+            </Segment.Group>
+        </div>;
+    }
 }
