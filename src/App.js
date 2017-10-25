@@ -9,6 +9,7 @@ import { Package } from './components/Package';
 
 import { packages as packagesModel } from './model/packages';
 import { contentSearch as contentSearchModel } from './model/contentSearch';
+import { content as contentModel } from './model/content';
 
 import { StateKeys } from './model/constants';
 import { TEST_DATA } from './util/test-data';
@@ -22,10 +23,15 @@ class App extends Component {
     this.state = TEST_DATA;
     this.packages = packagesModel(this);
     this.contentSearch = contentSearchModel(this);
+    this.content = contentModel(this);
   }
 
   componentDidMount() {
     this.contentSearch.search();
+  }
+
+  componentDidUpdate() {
+    this.content.enrich(this.state);
   }
 
   render() {

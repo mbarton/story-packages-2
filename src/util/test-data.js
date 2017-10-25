@@ -2,16 +2,6 @@ function content(n) {
     return { id: n };
 }
 
-function searchResults(n) {
-    const ret = [];
-
-    for(let i = 0; i < n; i++) {
-        ret.push(content(i));
-    }
-
-    return ret;
-}
-
 export const TEST_PACKAGES = [
     { id: 1, title: "Empty Package", content: [null, null, null, null, null, null, null, null, null, null] },
     { id: 2, title: "Package 1", content: [content(0), null, content(1), null, null, null, null, null, null, null] },
@@ -32,5 +22,6 @@ export const TEST_DATA = {
         text: null,
         loading: false,
         results: []
-    }
+    },
+    content: []
 }
