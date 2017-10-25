@@ -21,7 +21,8 @@ export const TEST_PACKAGES = [
 
 export const TEST_DATA = {
     contentSearch: {
-        results: searchResults(12)
+        loading: true,
+        results: []
     },
     editor: {
         loading: false,

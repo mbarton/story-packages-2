@@ -17,34 +17,14 @@ DayRange = Today | Yesterday | ${Today - 2} | ${Today - 3} | ... | ${Today - 7}
 TimeRange = 3 mins | 10 mins | 1 hour | 8 hours | 24 hours | 7 days
 
 ContentSearch: {
-    type: Draft | Live,
-    sliceType: None | Section | Tag
-    range: DayRange, 
-    orderBy: Newest | Relevance,
-    query: String,
-    slice: String,
-    page: Int,
-    pages: Int
-}
-
-MostReadSearch: {
-    sliceType: None | Section | Tag,
+    loading: bool,
+    type: Draft | Live | MostRead,
     range: DayRange | TimeRange,
-    results: List[ID]
-}
-
-ContentSearch: {
-    type: CAPI | MostRead,
+    orderBy: Newest | Relevance, # TODO MRB: encode this in type system
     sliceType: None | Section | Tag,
-    query: String,
     slice: String,
     page: Int,
     pages: Int,
-    results: List[ID]
-}
-
-SliceSearch: {
-    query: String,
     results: List[ID]
 }
 
@@ -70,5 +50,5 @@ Root: {
         thePackage: Package
     },
     packageSearch: PackageSearch,
-    contentSearch: ContentSearch | MostReadSearch
+    contentSearch: ContentSearch
 }
