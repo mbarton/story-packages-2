@@ -77,7 +77,7 @@ class PackageEditor extends React.Component {
 }
 
 export function Package({ size, loading, thePackage, onChange }) {
-    if(thePackage === null) {
+    if(loading || !thePackage) {
         return <Segment loading={loading} />;
     } else {
         return <PackageEditor size={size} thePackage={thePackage} onChange={onChange} />;

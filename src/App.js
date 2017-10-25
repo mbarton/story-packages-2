@@ -13,6 +13,7 @@ import { content as contentModel } from './model/content';
 
 import { StateKeys } from './model/constants';
 import { TEST_DATA } from './util/test-data';
+import { updateHistory } from './util/history';
 
 const PACKAGE_SIZE = 9;
 
@@ -30,8 +31,9 @@ class App extends Component {
     this.contentSearch.search();
   }
 
-  componentDidUpdate() {
+  componentDidUpdate(_, prevState) {
     this.content.enrich(this.state);
+    updateHistory(prevState, this.state);
   }
 
   render() {
@@ -44,8 +46,10 @@ class App extends Component {
           </Grid.Column>
           <Grid.Column width={10}>
             <PackageSearch
+              onAddItem={this.packages.addPackage}
               onChange={this.packages.setPackage}
               onSearchChange={this.packages.packageSearch}
+              thePackage={this.state[StateKeys.EDITOR].thePackage}
               {...this.state[StateKeys.PACKAGE_SEARCH]}
             />
             <Package

@@ -1,18 +1,32 @@
 import { update as partialUpdate } from './base';
 import { StateKeys } from './constants';
 
-import { getPackage, savePackage, searchPackages } from '../services/packages';
+import { createPackage, getPackage, savePackage, searchPackages } from '../services/packages';
 
 export function packages(app) {
     const update = partialUpdate(app);
 
     return {
-        setPackage: (id) => {
+        addPackage: (name) => {
             update(StateKeys.EDITOR, { loading: true, thePackage: null });
-            
-            getPackage(id).then(thePackage => {
+
+            createPackage(name).then(thePackage => {
                 update(StateKeys.EDITOR, { loading: false, thePackage });
                 update(StateKeys.PACKAGE_SEARCH, { text: thePackage.title });
+            })
+        },
+
+        setPackage: (id) => {
+            const tempPackage = { id, content: [] };
+            update(StateKeys.EDITOR, { loading: true, thePackage: tempPackage });
+            
+            getPackage(id).then(thePackage => {
+                if(thePackage) {
+                    update(StateKeys.EDITOR, { loading: false, thePackage });
+                    update(StateKeys.PACKAGE_SEARCH, { text: thePackage.title });
+                } else {
+                    update(StateKeys.EDITOR, { loading: false, thePackage: null });
+                }
             });
         },
 

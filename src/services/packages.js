@@ -1,4 +1,5 @@
-import { TEST_PACKAGES } from '../util/test-data';
+// 10 spaces. 9 up top, 1 down below
+const EMPTY = [null, null, null, null, null, null, null, null, null, null];
 
 function simulateNetwork(ret) {
     return new Promise((resolve) => {
@@ -8,22 +9,53 @@ function simulateNetwork(ret) {
     })
 }
 
-export function getPackage(id) {
-    let thePackage = localStorage[`test-story-packages-${id}`];
-    
-    if(thePackage) {
-        thePackage = JSON.parse(thePackage);
-    } else {
-        thePackage = TEST_PACKAGES.find(p => p.id === id); 
+function save(packages) {
+    localStorage['test-story-packages'] = JSON.stringify(packages);
+}
+
+function load() {
+    let ret = localStorage['test-story-packages'];
+
+    if(!ret) {
+        ret = "[]";
     }
 
+    return JSON.parse(ret);
+}
+
+export function createPackage(title) {
+    const existing = load();
+
+    let id = 0;
+    if(existing.length > 0) {
+        id = Math.max(...existing.map(p => p.id)) + 1;
+    }
+
+    const thePackage = { id, title, content: EMPTY };
+    save(existing.concat(thePackage));
+    
     return simulateNetwork(thePackage);
 }
 
+export function getPackage(id) {
+    return simulateNetwork(load().find(p => p.id === id));
+}
+
 export function savePackage(id, thePackage) {
-    localStorage[`test-story-packages-${id}`] = JSON.stringify(thePackage);
+    const ret = [];
+    const existing = load();
+
+    for(let i = 0; i < existing.length; i++) {
+        if(existing[i].id === id) {
+            ret.push(thePackage);
+        } else {
+            ret.push(existing[i]);
+        }
+    }
+    
+    save(ret);
 }
 
 export function searchPackages(text) {
-    return simulateNetwork(TEST_PACKAGES);
+    return simulateNetwork(load());
 }
