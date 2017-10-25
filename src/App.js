@@ -13,7 +13,7 @@ import { content as contentModel } from './model/content';
 
 import { StateKeys } from './model/constants';
 import { TEST_DATA } from './util/test-data';
-import { updateHistory } from './util/history';
+import { updateHistory, getPackageId } from './util/history';
 
 const PACKAGE_SIZE = 9;
 
@@ -25,15 +25,30 @@ class App extends Component {
     this.packages = packagesModel(this);
     this.contentSearch = contentSearchModel(this);
     this.content = contentModel(this);
+
+    window.onpopstate = () => {
+      this.loadPackageFromUrl();
+    }
   }
 
   componentDidMount() {
+    this.loadPackageFromUrl();
     this.contentSearch.search();
   }
 
   componentDidUpdate(_, prevState) {
     this.content.enrich(this.state);
     updateHistory(prevState, this.state);
+  }
+
+  loadPackageFromUrl() {
+    const packageId = getPackageId();
+
+    if(packageId !== null) {
+      this.packages.setPackage(packageId);
+    } else {
+      this.packages.clearPackage();
+    }
   }
 
   render() {

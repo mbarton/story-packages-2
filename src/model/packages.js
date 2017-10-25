@@ -30,6 +30,10 @@ export function packages(app) {
             });
         },
 
+        clearPackage: () => {
+            update(StateKeys.EDITOR, { loading: false, thePackage: null });
+        },
+
         packageSearch: (text) => {
             update(StateKeys.PACKAGE_SEARCH, { loading: true, text });
         
