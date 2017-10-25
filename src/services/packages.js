@@ -1,13 +1,7 @@
+import { simulateNetwork } from '../util/test-data';
+
 // 10 spaces. 9 up top, 1 down below
 const EMPTY = [null, null, null, null, null, null, null, null, null, null];
-
-function simulateNetwork(ret) {
-    return new Promise((resolve) => {
-        setTimeout(() => {
-            resolve(ret);
-        }, 500);
-    })
-}
 
 function save(packages) {
     localStorage['test-story-packages'] = JSON.stringify(packages);

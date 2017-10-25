@@ -19,3 +19,14 @@ export function update(app) {
         setOnApp(key, after);
     }
 }
+
+export function modify(app) {
+    const setOnApp = set(app);
+
+    return (key, fn) => {
+        const before = app.state[key];
+        const after = Object.assign({}, before, fn(before));
+
+        setOnApp(key, after);
+    }
+}

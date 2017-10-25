@@ -2,6 +2,14 @@ function content(n) {
     return { id: n };
 }
 
+export function simulateNetwork(ret) {
+    return new Promise((resolve) => {
+        setTimeout(() => {
+            resolve(ret);
+        }, 500);
+    })
+}
+
 export const TEST_PACKAGES = [
     { id: 1, title: "Empty Package", content: [null, null, null, null, null, null, null, null, null, null] },
     { id: 2, title: "Package 1", content: [content(0), null, content(1), null, null, null, null, null, null, null] },
@@ -23,5 +31,5 @@ export const TEST_DATA = {
         loading: false,
         results: []
     },
-    content: []
+    content: {}
 }

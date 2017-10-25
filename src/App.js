@@ -37,7 +37,10 @@ class App extends Component {
   }
 
   componentDidUpdate(_, prevState) {
-    this.content.enrich(this.state);
+    if(this.content.needsEnrichment(prevState, this.state)) {
+      this.content.enrich(this.state);
+    }
+    
     updateHistory(prevState, this.state);
   }
 

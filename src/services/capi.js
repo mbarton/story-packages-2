@@ -11,17 +11,34 @@ function getTone(item) {
 }
 
 export function getLatestItems() {
-    // TODO MRB: can we rely on internalComposerCode?
-    return fetch(`${ROOT}/search?page-size=20&order-by=newest&show-fields=internalComposerCode`)
+    // TODO MRB: should really be composer id instead?
+    return fetch(`${ROOT}/search?page-size=20&order-by=newest&show-fields=internalShortId`)
         .then(r => r.json())
         .then(({ response }) => {
             const { results } = response;
             
             return results.map(result => {
                 return {
-                    id: result.fields.internalComposerCode
+                    id: result.fields.internalShortId
                 }
             });
+        });
+}
+
+export function getItem(shortId) {
+    return fetch(`${ROOT}${shortId}?show-fields=internalShortId,thumbnail,lastModified&show-tags=all`)
+        .then(r => r.json())
+        .then(({ response }) => {
+            const { content } = response;
+
+            return {
+                id: content.fields.internalShortId,
+                title: content.webTitle,
+                tone: getTone(content),
+                thumbnail: content.fields.thumbnail,
+                webPublicationDate: content.webPublicationDate,
+                lastModified: content.fields.lastModified
+            }
         });
 }
 
