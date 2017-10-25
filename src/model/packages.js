@@ -1,4 +1,6 @@
 import { update as partialUpdate } from './base';
+import { StateKeys } from './constants';
+
 import { getPackage, savePackage, searchPackages } from '../services/packages';
 
 export function packages(app) {
@@ -6,20 +8,20 @@ export function packages(app) {
 
     return {
         setPackage: (id) => {
-            update("editor", { loading: true, thePackage: null });
+            update(StateKeys.EDITOR, { loading: true, thePackage: null });
             
             getPackage(id).then(thePackage => {
-                update("editor", { loading: false, thePackage });
-                update("packageSearch", { text: thePackage.title });
+                update(StateKeys.EDITOR, { loading: false, thePackage });
+                update(StateKeys.PACKAGE_SEARCH, { text: thePackage.title });
             });
         },
 
         packageSearch: (text) => {
-            update("packageSearch", { loading: true, text });
+            update(StateKeys.PACKAGE_SEARCH, { loading: true, text });
         
             // TODO MRB: generic error handling
             searchPackages(text).then(results => {
-                update("packageSearch", { loading: false, results });
+                update(StateKeys.PACKAGE_SEARCH, { loading: false, results });
             });
         },
         
@@ -34,7 +36,7 @@ export function packages(app) {
             const thePackage = Object.assign({}, packageBefore, { content });
         
             savePackage(thePackage.id, thePackage);
-            update("editor", { thePackage });
+            update(StateKeys.EDITOR, { thePackage });
         }
     }
 }

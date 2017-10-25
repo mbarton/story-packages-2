@@ -8,9 +8,9 @@ import { ContentSearch } from './components/ContentSearch';
 import { Package } from './components/Package';
 
 import { packages as packagesModel } from './model/packages';
+import { contentSearch as contentSearchModel } from './model/contentSearch';
 
-import { getLatestItems } from './services/capi';
-
+import { StateKeys } from './model/constants';
 import { TEST_DATA } from './util/test-data';
 
 const PACKAGE_SIZE = 9;
@@ -21,14 +21,11 @@ class App extends Component {
     
     this.state = TEST_DATA;
     this.packages = packagesModel(this);
+    this.contentSearch = contentSearchModel(this);
   }
 
   componentDidMount() {
-    getLatestItems().then(this.setContentSearchResults);
-  }
-
-  setContentSearchResults = (results) => {
-    // this.update("contentSearch", { loading: false, results });
+    this.contentSearch.search();
   }
 
   render() {
@@ -43,12 +40,12 @@ class App extends Component {
             <PackageSearch
               onChange={this.packages.setPackage}
               onSearchChange={this.packages.packageSearch}
-              {...this.state.packageSearch}
+              {...this.state[StateKeys.PACKAGE_SEARCH]}
             />
             <Package
               size={PACKAGE_SIZE}
               onChange={this.packages.updatePackage}
-              {...this.state.editor}
+              {...this.state[StateKeys.EDITOR]}
             />
           </Grid.Column>
         </Grid.Row>
