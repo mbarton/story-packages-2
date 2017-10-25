@@ -26,7 +26,7 @@ function insertOrReplace(sourceIx, destinationIx, content, before) {
     return after;
 }
 
-export class Package extends React.Component {
+class PackageEditor extends React.Component {
     constructor(props) {
         super(props);
         this.state = { content: props.thePackage.content };
@@ -43,7 +43,9 @@ export class Package extends React.Component {
 
     onDrop = (sourceIx, destinationIx, newContent) => {
         const content = insertOrReplace(sourceIx, destinationIx, newContent, this.props.thePackage.content);
-        this.props.onChange({ content });
+        const newPackage = Object.assign({}, this.props.thePackage, { content });
+
+        this.props.onChange(newPackage);
     }
 
     render() {
@@ -71,5 +73,13 @@ export class Package extends React.Component {
                 {linkingTo.map(buildContainer)}
             </Segment.Group>
         </div>;
+    }
+}
+
+export function Package({ size, loading, thePackage, onChange }) {
+    if(thePackage === null) {
+        return <Segment loading={loading} />;
+    } else {
+        return <PackageEditor size={size} thePackage={thePackage} onChange={onChange} />;
     }
 }

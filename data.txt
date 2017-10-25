@@ -58,13 +58,17 @@ Package: {
 
 PackageSearch: {
     text: String,
+    loading: bool,
     results: List[Package]
 }
 
 Root: {
     content: List[Content]
     clipboard: List[ID]
-    package: Package,
+    editor: {
+        loading: bool,
+        thePackage: Package
+    },
     packageSearch: PackageSearch,
     contentSearch: ContentSearch | MostReadSearch
 }

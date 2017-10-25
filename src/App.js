@@ -3,8 +3,11 @@ import { Container, Grid, Segment } from 'semantic-ui-react';
 import { DragDropContext } from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
 
+import { PackageSearch } from './components/PackageSearch';
 import { ContentSearch } from './components/ContentSearch';
 import { Package } from './components/Package';
+
+import { getPackage, savePackage, searchPackages } from './services/packages';
 
 import { TEST_DATA } from './util/test-data';
 
@@ -16,6 +19,34 @@ class App extends Component {
     this.state = TEST_DATA;
   }
 
+  update(key, value) {
+    const before = this.state[key];
+    const after = Object.assign({}, before, value);
+
+    const newPartialState = {};
+    newPartialState[key] = after;
+
+    this.setState(newPartialState);
+  }
+
+  setPackage = (id) => {
+    this.update("editor", { loading: true, thePackage: null });
+
+    getPackage(id).then(thePackage => {
+      this.update("editor", { loading: false, thePackage });
+      this.update("packageSearch", { text: thePackage.title });
+    })
+  }
+
+  packageSearch = (text) => {
+    this.update("packageSearch", { loading: true, text });
+
+    // TODO MRB: generic error handling
+    searchPackages(text).then(results => {
+      this.update("packageSearch", { loading: false, results });
+    });
+  }
+
   updatePackage = (packageBefore) => {
     // ensure there's a drop-zone at the end for
     // stories that are just linking to the package
@@ -24,8 +55,10 @@ class App extends Component {
       content.push(null);
     }
     
-    const packageAfter = Object.assign({}, packageBefore, { content });
-    this.setState({ package: packageAfter });
+    const thePackage = Object.assign({}, packageBefore, { content });
+
+    savePackage(thePackage.id, thePackage);
+    this.update("editor", { thePackage });
   }
 
   render() {
@@ -39,7 +72,16 @@ class App extends Component {
             </Segment>
           </Grid.Column>
           <Grid.Column width={10}>
-            <Package size={PACKAGE_SIZE} onChange={this.updatePackage} thePackage={this.state.package} />
+            <PackageSearch
+              onChange={this.setPackage}
+              onSearchChange={this.packageSearch}
+              {...this.state.packageSearch}
+            />
+            <Package
+              size={PACKAGE_SIZE}
+              onChange={this.updatePackage}
+              {...this.state.editor}
+            />
           </Grid.Column>
         </Grid.Row>
       </Grid>
