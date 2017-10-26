@@ -7,7 +7,7 @@ export function updateHistory(prevState, state) {
     const idBefore = packageBefore ? packageBefore.id : null;
     const idAfter = packageAfter ? packageAfter.id : null;
 
-    if(idAfter && idBefore != idAfter) {
+    if(idAfter && idBefore !== idAfter) {
         window.history.pushState({}, "", idAfter);
     }
 }

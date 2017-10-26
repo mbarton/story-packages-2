@@ -11,8 +11,6 @@ export function update(app) {
     const setOnApp = set(app);
 
     return (key, value) => {
-        console.log(`${key}: ${JSON.stringify(value)}`);
-
         const before = app.state[key];
         const after = Object.assign({}, before, value);
 

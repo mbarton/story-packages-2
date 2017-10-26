@@ -45,8 +45,6 @@ export function content(app) {
             results.forEach(({ id }) => {
                 if(!cache.hasOwnProperty(id)) {
                     getItem(id).then(content => {
-                        console.log(id);
-                        
                         modify(StateKeys.CONTENT, before => {
                             const after = Object.assign({}, before);
                             after[id] = content;

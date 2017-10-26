@@ -1,7 +1,7 @@
 import React from 'react';
-import { Grid, Segment, Item, Icon } from 'semantic-ui-react';
+import { Segment } from 'semantic-ui-react';
 
-import { Container } from './Container';
+import { PackageSquares } from './PackageSquares';
 
 function insertOrReplace(sourceIx, destinationIx, content, before) {
     const after = before.slice();
@@ -55,23 +55,9 @@ class PackageEditor extends React.Component {
         const included = indexed.slice(0, size);
         const linkingTo = indexed.slice(size);
 
-        const buildContainer = ([item, ix]) => {
-            return <Container
-                key={ix}
-                ix={ix}
-                item={item}
-                onHover={this.onHover}
-                onDrop={this.onDrop}
-            />;
-        };
-
         return <div>
-            <Segment.Group raised>
-                {included.map(buildContainer)}
-            </Segment.Group>
-            <Segment.Group raised>
-                {linkingTo.map(buildContainer)}
-            </Segment.Group>
+            <PackageSquares items={included} onHover={this.onHover} onDrop={this.onDrop} />
+            <PackageSquares items={linkingTo} onHover={this.onHover} onDrop={this.onDrop} />
         </div>;
     }
 }

@@ -1,5 +1,4 @@
 import React from 'react';
-import { Item } from 'semantic-ui-react';
 import { DropTarget } from 'react-dnd';
 
 import { DragType } from '../model/constants';
@@ -37,7 +36,7 @@ function collect(connect, monitor) {
 }
 
 function ContainerUnconnected({ ix, item, connectDropTarget }) {
-    const className = `ui segment ${item ? "" : "very padded"}`;
+    const className = item ? "" : "ui segment vertical very padded";
 
     // TOTALLY LEGIT HACK! react-dnd only works with a native element at the top level 
     return connectDropTarget(<div className={className}>

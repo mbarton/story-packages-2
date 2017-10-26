@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Container, Grid, Segment } from 'semantic-ui-react';
+import { Container, Grid } from 'semantic-ui-react';
 import { DragDropContext } from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
 
