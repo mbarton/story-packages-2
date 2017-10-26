@@ -32,8 +32,24 @@ class PackageEditor extends React.Component {
         this.state = { content: props.thePackage.content };
     }
 
-    componentWillReceiveProps({ thePackage }) {
+    componentWillReceiveProps({ thePackage, overPackageEditor }) {
+        if(this.props.overPackageEditor && !overPackageEditor) {
+            this.onLeave();
+        }
+
         this.setState({ content: thePackage.content });
+    }
+
+    onLeave = () => {
+        const { dragSourceIx } = this.props;
+
+        if(dragSourceIx !== null) {
+            const content = this.props.thePackage.content.slice();
+            content[dragSourceIx] = null;
+
+            const newPackage = Object.assign({}, this.props.thePackage, { content });
+            this.props.onChange(newPackage);
+        }
     }
 
     onHover = (sourceIx, destinationIx, newContent) => {
@@ -55,17 +71,24 @@ class PackageEditor extends React.Component {
         const included = indexed.slice(0, size);
         const linkingTo = indexed.slice(size);
 
-        return <div>
-            <PackageSquares items={included} onHover={this.onHover} onDrop={this.onDrop} />
-            <PackageSquares items={linkingTo} onHover={this.onHover} onDrop={this.onDrop} />
+        return <div id="packageEditor">
+            <PackageSquares items={included} onDragStart={this.props.onDragStart} onHover={this.onHover} onDrop={this.onDrop} />
+            <PackageSquares items={linkingTo} onDragStart={this.props.onDragStart} onHover={this.onHover} onDrop={this.onDrop} />
         </div>;
     }
 }
 
-export function Package({ size, loading, thePackage, onChange }) {
+export function Package({ size, loading, dragSourceIx, overPackageEditor, thePackage, onDragStart, onChange }) {
     if(loading || !thePackage) {
         return <Segment loading={loading} />;
     } else {
-        return <PackageEditor size={size} thePackage={thePackage} onChange={onChange} />;
+        return <PackageEditor
+            size={size}
+            dragSourceIx={dragSourceIx}
+            overPackageEditor={overPackageEditor}
+            thePackage={thePackage}
+            onDragStart={onDragStart}
+            onChange={onChange}
+        />;
     }
 }

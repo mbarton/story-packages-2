@@ -35,13 +35,17 @@ function collect(connect, monitor) {
     }
 }
 
-function ContainerUnconnected({ ix, item, connectDropTarget }) {
+function ContainerUnconnected({ ix, item, onDragStart, connectDropTarget }) {
     const className = item ? "" : "ui segment vertical very padded";
 
     // TOTALLY LEGIT HACK! react-dnd only works with a native element at the top level 
-    return connectDropTarget(<div className={className}>
-        {item ? <Content ix={ix} item={item} /> : false}
-    </div>);
+    return <div>
+        {connectDropTarget(
+            <div className={className}>
+                {item ? <Content ix={ix} item={item} onDragStart={onDragStart} /> : false}
+            </div>
+        )}
+    </div>;
 }
 
 export const Container = DropTarget(DragType.CONTENT, packageEntryTarget, collect)(ContainerUnconnected);

@@ -2,7 +2,7 @@ import React from 'react';
 import { Grid, Segment } from 'semantic-ui-react';
 import { Container } from './Container';
 
-export function PackageSquares({ items, onHover, onDrop }) {
+export function PackageSquares({ items, onDragStart, onHover, onDrop }) {
     const rows = [];
     let row = [];
 
@@ -11,6 +11,7 @@ export function PackageSquares({ items, onHover, onDrop }) {
             key={ix}
             ix={ix}
             item={item}
+            onDragStart={onDragStart}
             onHover={onHover}
             onDrop={onDrop}
         />);

@@ -14,6 +14,10 @@ export function update(app) {
         const before = app.state[key];
         const after = Object.assign({}, before, value);
 
+        if(key === "dragging") {
+            console.log(`[dragging] ${JSON.stringify(value)}`);
+        }
+
         setOnApp(key, after);
     }
 }

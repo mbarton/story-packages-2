@@ -31,5 +31,6 @@ export const TEST_DATA = {
         loading: false,
         results: []
     },
-    content: {}
+    content: {},
+    dragging: {}
 }

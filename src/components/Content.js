@@ -6,8 +6,11 @@ import { Item, Label, Header } from 'semantic-ui-react';
 import { DragType } from '../model/constants';
 
 const contentSource = {
-    beginDrag({ item, ix }) {
-        return { item, ix: ix === undefined ? null : ix };
+    beginDrag({ item, ix, onDragStart }) {
+        const sourceIx = ix === undefined ? null : ix;
+        onDragStart(sourceIx);
+
+        return { item, ix: sourceIx };
     }
 }
 
