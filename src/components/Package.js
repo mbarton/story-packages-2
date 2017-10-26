@@ -1,5 +1,4 @@
 import React from 'react';
-import { Segment } from 'semantic-ui-react';
 
 import { PackageSquares } from './PackageSquares';
 
@@ -26,7 +25,7 @@ function insertOrReplace(sourceIx, destinationIx, content, before) {
     return after;
 }
 
-class PackageEditor extends React.Component {
+export class Package extends React.Component {
     constructor(props) {
         super(props);
         this.state = { content: props.thePackage.content };
@@ -41,11 +40,11 @@ class PackageEditor extends React.Component {
     }
 
     onLeave = () => {
-        const { dragSourceIx } = this.props;
+        const { sourceIx } = this.props;
 
-        if(dragSourceIx !== null) {
+        if(sourceIx !== null) {
             const content = this.props.thePackage.content.slice();
-            content[dragSourceIx] = null;
+            content[sourceIx] = null;
 
             const newPackage = Object.assign({}, this.props.thePackage, { content });
             this.props.onChange(newPackage);
@@ -57,8 +56,8 @@ class PackageEditor extends React.Component {
         this.setState({ content });
     }
 
-    onDrop = (sourceIx, destinationIx, newContent) => {
-        const content = insertOrReplace(sourceIx, destinationIx, newContent, this.props.thePackage.content);
+    onDrop = (sourceIx, destinationIx, { id }) => {
+        const content = insertOrReplace(sourceIx, destinationIx, { id }, this.props.thePackage.content);
         const newPackage = Object.assign({}, this.props.thePackage, { content });
 
         this.props.onChange(newPackage);
@@ -75,20 +74,5 @@ class PackageEditor extends React.Component {
             <PackageSquares items={included} onDragStart={this.props.onDragStart} onHover={this.onHover} onDrop={this.onDrop} />
             <PackageSquares items={linkingTo} onDragStart={this.props.onDragStart} onHover={this.onHover} onDrop={this.onDrop} />
         </div>;
-    }
-}
-
-export function Package({ size, loading, dragSourceIx, overPackageEditor, thePackage, onDragStart, onChange }) {
-    if(loading || !thePackage) {
-        return <Segment loading={loading} />;
-    } else {
-        return <PackageEditor
-            size={size}
-            dragSourceIx={dragSourceIx}
-            overPackageEditor={overPackageEditor}
-            thePackage={thePackage}
-            onDragStart={onDragStart}
-            onChange={onChange}
-        />;
     }
 }

@@ -25,7 +25,7 @@ export function createPackage(title) {
         id = Math.max(...existing.map(p => p.id)) + 1;
     }
 
-    const thePackage = { id, title, content: EMPTY };
+    const thePackage = { id: String(id), title, content: EMPTY };
     save(existing.concat(thePackage));
     
     return simulateNetwork(thePackage);

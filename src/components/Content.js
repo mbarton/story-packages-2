@@ -26,12 +26,12 @@ function sinceTime(date) {
     return moment.duration(then.diff(now)).humanize();
 }
 
-function TrailText({ text }) {
-    return <Item.Description dangerouslySetInnerHTML={{__html: text}} />;
-}
+// function TrailText({ text }) {
+//     return <Item.Description dangerouslySetInnerHTML={{__html: text}} />;
+// }
 
 function ContentUnconnected({ item, ix, connectDragSource }) {
-    const { id, headline, trailText, tone, thumbnail, webPublicationDate } = item;
+    const { id, headline/*, trailText*/, tone, thumbnail, webPublicationDate } = item;
 
     return connectDragSource(
         // TOTALLY LEGIT HACK! react-dnd only works with a native element at the top level 
@@ -40,10 +40,10 @@ function ContentUnconnected({ item, ix, connectDragSource }) {
                 {thumbnail ? <Item.Image size="tiny" src={thumbnail} /> : false}
                 <Item.Content>
                     <Header size="tiny">{headline ? headline : id}</Header>
-                    <TrailText text={trailText} />
+                    {/* <TrailText text={trailText} /> */}
                     <Item.Extra>
                         <Label size="tiny">{tone}</Label>
-                        <Label size="tiny">{sinceTime(webPublicationDate)}</Label>
+                        <Label size="tiny" color="green">{sinceTime(webPublicationDate)}</Label>
                     </Item.Extra>
                 </Item.Content>
             </div>

@@ -1,9 +1,10 @@
 import React from 'react';
+import { withRouter } from 'react-router-dom'
 import { Segment, Dropdown } from 'semantic-ui-react';
 
 // TOTALLY LEGIT HACK! Supress onChange from firing until we've had one go round the event loop
 // This avoids firing onChange if we've already fired onAddItem
-class PackageDropdown extends React.Component {
+class PackageDropdownUnconnected extends React.Component {
     constructor(props) {
         super(props);
         
@@ -11,7 +12,7 @@ class PackageDropdown extends React.Component {
     }
 
     render() {
-        const { loading, value, options, onSearchChange, onAddItem, onChange } = this.props;
+        const { loading, value, options, history, onSearchChange, onAddItem, onChange } = this.props;
 
         return <Dropdown
             fluid
@@ -25,7 +26,9 @@ class PackageDropdown extends React.Component {
             value={value}
             onAddItem={(e, { value }) => {
                 // Where value is the name of the new package
-                onAddItem(value);
+                onAddItem(value).then(id => {
+                    history.push(`/packages/${id}`);
+                });
 
                 this.fireOnChange = false;
             }}
@@ -33,7 +36,9 @@ class PackageDropdown extends React.Component {
                 setTimeout(() => {
                     if(this.fireOnChange) {
                         // Where value is the ID of the package
-                        onChange(value);
+                        onChange(value).then(id => {
+                            history.push(`/packages/${id}`);
+                        });
                     }
 
                     this.fireOnChange = true;
@@ -45,6 +50,8 @@ class PackageDropdown extends React.Component {
         />
     }
 }
+
+const PackageDropdown = withRouter(PackageDropdownUnconnected);
 
 export function PackageSearch({ text, loading, results, thePackage, onAddItem, onChange, onSearchChange }) {
     const content = results.slice();

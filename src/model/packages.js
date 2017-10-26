@@ -10,9 +10,11 @@ export function packages(app) {
         addPackage: (name) => {
             update(StateKeys.EDITOR, { loading: true, thePackage: null });
 
-            createPackage(name).then(thePackage => {
+            return createPackage(name).then(thePackage => {
                 update(StateKeys.EDITOR, { loading: false, thePackage });
                 update(StateKeys.PACKAGE_SEARCH, { text: thePackage.title });
+
+                return thePackage.id;
             })
         },
 
@@ -20,13 +22,16 @@ export function packages(app) {
             const tempPackage = { id, content: [] };
             update(StateKeys.EDITOR, { loading: true, thePackage: tempPackage });
             
-            getPackage(id).then(thePackage => {
+            // TODO MRB: handle package that does not exist
+            return getPackage(id).then(thePackage => {
                 if(thePackage) {
                     update(StateKeys.EDITOR, { loading: false, thePackage });
                     update(StateKeys.PACKAGE_SEARCH, { text: thePackage.title });
                 } else {
                     update(StateKeys.EDITOR, { loading: false, thePackage: null });
                 }
+
+                return id;
             });
         },
 

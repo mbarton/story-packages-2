@@ -2,10 +2,11 @@ import React, { Component } from 'react';
 import { Container, Grid } from 'semantic-ui-react';
 import { DragDropContext } from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
+import { BrowserRouter, Route } from 'react-router-dom';
 
-import { PackageSearch } from './components/PackageSearch';
 import { ContentSearch } from './components/ContentSearch';
-import { Package } from './components/Package';
+import { PackageSearch } from './components/PackageSearch';
+import { PackagePanel } from './components/PackagePanel';
 
 import { packages as packagesModel } from './model/packages';
 import { contentSearch as contentSearchModel } from './model/contentSearch';
@@ -14,7 +15,6 @@ import { dragging as draggingModel } from './model/dragging';
 
 import { StateKeys } from './model/constants';
 import { TEST_DATA } from './util/test-data';
-import { updateHistory, getPackageId } from './util/history';
 
 import './overrides.css';
 
@@ -31,32 +31,15 @@ class App extends Component {
     this.contentSearch = contentSearchModel(this);
     this.content = contentModel(this);
     this.dragging = draggingModel(this);
-
-    window.onpopstate = () => {
-      this.loadPackageFromUrl();
-    }
   }
 
   componentDidMount() {
-    this.loadPackageFromUrl();
     this.contentSearch.search();
   }
 
-  componentDidUpdate(_, prevState) {
+  componentDidUpdate(prevProps, prevState) {
     if(this.content.cacheRequiresUpdate(prevState, this.state)) {
       this.content.updateCache(this.state);
-    }
-
-    updateHistory(prevState, this.state);
-  }
-
-  loadPackageFromUrl() {
-    const packageId = getPackageId();
-
-    if(packageId !== null) {
-      this.packages.setPackage(packageId);
-    } else {
-      this.packages.clearPackage();
     }
   }
 
@@ -84,22 +67,23 @@ class App extends Component {
     let thePackage = editor.thePackage;
     if(thePackage) {
       const editorResults = this.content.enrichFromCache(cache, thePackage.content);
-      thePackage = Object.assign({}, editor.thePackage, { results: editorResults });
+      thePackage = Object.assign({}, editor.thePackage, { content: editorResults });
     }
 
-    return <div onDragEnter={this.onDragEnter}>
-        <Container fluid>
-        {/* Semantic UI Grid has 16 divisions */}
-        <Grid columns={2}>
-          <Grid.Row>
-            <Grid.Column width={5}>
-              <ContentSearch
-                loading={contentSearch.loading}
-                results={contentResults}
-                onDragStart={this.dragging.startDrag(false)} // not initially over package editor
-              />
-            </Grid.Column>
-            <Grid.Column width={11}>
+    return <BrowserRouter>
+        <div onDragEnter={this.onDragEnter}>
+          <Container fluid>
+          {/* Semantic UI Grid has 16 divisions */}
+          <Grid columns={2}>
+            <Grid.Row>
+              <Grid.Column width={5}>
+                <ContentSearch
+                  loading={contentSearch.loading}
+                  results={contentResults}
+                  onDragStart={this.dragging.startDrag(false)} // not initially over package editor
+                />
+              </Grid.Column>
+              <Grid.Column width={11}>
               <PackageSearch
                 text={packageSearch.text}
                 loading={packageSearch.loading}
@@ -110,20 +94,27 @@ class App extends Component {
                 onChange={this.packages.setPackage}
                 onSearchChange={this.packages.packageSearch}
               />
-              <Package
-                size={PACKAGE_SIZE}
-                loading={editor.loading}
-                thePackage={thePackage}
-                dragSourceIx={dragging.sourceIx}
-                overPackageEditor={dragging.overPackageEditor}
-                onDragStart={this.dragging.startDrag(true)} // initially over package editor
-                onChange={this.packages.updatePackage}
+              <Route
+                path="/packages/:id"
+                render={({ match }) => {
+                  return <PackagePanel
+                    packageId={match.params.id}
+                    size={PACKAGE_SIZE}
+                    loading={editor.loading}
+                    thePackage={thePackage}
+                    onDragStart={this.dragging.startDrag(true)} // initially over package editor
+                    onChange={this.packages.updatePackage}
+                    setPackage={this.packages.setPackage}
+                    {...dragging}
+                  />;
+                }}
               />
-            </Grid.Column>
-          </Grid.Row>
-        </Grid>
-      </Container>
-    </div>;
+              </Grid.Column>
+            </Grid.Row>
+          </Grid>
+        </Container>
+      </div>
+    </BrowserRouter>;
   }
 }
 

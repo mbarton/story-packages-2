@@ -7,7 +7,7 @@ function getTone(item) {
         return tag.webTitle;
     }
 
-    return "";
+    return item.sectionName;
 }
 
 export function getLatestItems() {
