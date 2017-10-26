@@ -4,9 +4,11 @@ import { Segment, Item } from 'semantic-ui-react';
 import { Content } from './Content';
 
 export function ContentSearch({ loading, results }) {
-    return <Segment loading={loading}>
-        <Item.Group divided>
-            {results.map(r => <Content key={r.id} item={r} />)}
-        </Item.Group>
-    </Segment>;
+    return <Segment.Group raised>
+        {results.map(r =>
+            <Segment>
+                <Content key={r.id} item={r} />
+            </Segment>
+        )}
+    </Segment.Group>;
 }

@@ -26,18 +26,22 @@ export function getLatestItems() {
 }
 
 export function getItem(shortId) {
-    return fetch(`${ROOT}${shortId}?show-fields=internalShortId,thumbnail,lastModified&show-tags=all`)
+    return fetch(`${ROOT}${shortId}?show-fields=internalShortId,thumbnail,lastModified,trailText&show-tags=all&show-packages=true`)
         .then(r => r.json())
         .then(({ response }) => {
             const { content } = response;
+            const packageData = content.packages ? content.packages : [];
 
             return {
                 id: content.fields.internalShortId,
-                title: content.webTitle,
+                headline: content.webTitle,
+                trailText: content.fields.trailText,
                 tone: getTone(content),
                 thumbnail: content.fields.thumbnail,
                 webPublicationDate: content.webPublicationDate,
-                lastModified: content.fields.lastModified
+                packages: packageData.map(({ packageId, packageName }) => {
+                    return { id: packageId, title: packageName };
+                })
             }
         });
 }

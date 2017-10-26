@@ -36,15 +36,12 @@ function collect(connect, monitor) {
     }
 }
 
-const placeholder = <Item>
-    {/* TOTALLY LEGIT HACK! special unicode em space to ensure correct height */}
-    <Item.Content> </Item.Content>
-</Item>;
-
 function ContainerUnconnected({ ix, item, connectDropTarget }) {
+    const className = `ui segment ${item ? "" : "very padded"}`;
+
     // TOTALLY LEGIT HACK! react-dnd only works with a native element at the top level 
-    return connectDropTarget(<div className={`ui segment ${item ? "" : "tertiary"}`}>
-        {item ? <Content ix={ix} item={item} /> : placeholder}
+    return connectDropTarget(<div className={className}>
+        {item ? <Content ix={ix} item={item} /> : false}
     </div>);
 }
 

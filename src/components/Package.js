@@ -1,5 +1,5 @@
 import React from 'react';
-import { Segment } from 'semantic-ui-react';
+import { Grid, Segment, Item, Icon } from 'semantic-ui-react';
 
 import { Container } from './Container';
 
@@ -63,7 +63,7 @@ class PackageEditor extends React.Component {
                 onHover={this.onHover}
                 onDrop={this.onDrop}
             />;
-        }
+        };
 
         return <div>
             <Segment.Group raised>

@@ -15,6 +15,8 @@ import { StateKeys } from './model/constants';
 import { TEST_DATA } from './util/test-data';
 import { updateHistory, getPackageId } from './util/history';
 
+import './overrides.css';
+
 const PACKAGE_SIZE = 9;
 
 class App extends Component {
@@ -37,10 +39,10 @@ class App extends Component {
   }
 
   componentDidUpdate(_, prevState) {
-    if(this.content.needsEnrichment(prevState, this.state)) {
-      this.content.enrich(this.state);
+    if(this.content.cacheRequiresUpdate(prevState, this.state)) {
+      this.content.updateCache(this.state);
     }
-    
+
     updateHistory(prevState, this.state);
   }
 
@@ -55,25 +57,46 @@ class App extends Component {
   }
 
   render() {
+    const cache = this.state[StateKeys.CONTENT];
+    const editor = this.state[StateKeys.EDITOR];
+
+    const contentSearch = this.state[StateKeys.CONTENT_SEARCH];
+    const packageSearch = this.state[StateKeys.PACKAGE_SEARCH];
+
+    const contentResults = this.content.enrichFromCache(cache, contentSearch.results);
+    
+    let thePackage = editor.thePackage;
+    if(thePackage) {
+      const editorResults = this.content.enrichFromCache(cache, thePackage.content);
+      thePackage = Object.assign({}, editor.thePackage, { results: editorResults });
+    }
+
     return <Container fluid>
       {/* Semantic UI Grid has 16 divisions */}
       <Grid columns={2}>
         <Grid.Row>
-          <Grid.Column width={6}>
-            <ContentSearch {...this.state.contentSearch} />
+          <Grid.Column width={5}>
+            <ContentSearch
+              loading={contentSearch.loading}
+              results={contentResults}
+            />
           </Grid.Column>
-          <Grid.Column width={10}>
+          <Grid.Column width={11}>
             <PackageSearch
+              text={packageSearch.text}
+              loading={packageSearch.loading}
+              results={packageSearch.results}
+              thePackage={thePackage}
+
               onAddItem={this.packages.addPackage}
               onChange={this.packages.setPackage}
               onSearchChange={this.packages.packageSearch}
-              thePackage={this.state[StateKeys.EDITOR].thePackage}
-              {...this.state[StateKeys.PACKAGE_SEARCH]}
             />
             <Package
               size={PACKAGE_SIZE}
+              loading={editor.loading}
+              thePackage={thePackage}
               onChange={this.packages.updatePackage}
-              {...this.state[StateKeys.EDITOR]}
             />
           </Grid.Column>
         </Grid.Row>

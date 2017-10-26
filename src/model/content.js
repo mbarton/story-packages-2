@@ -4,13 +4,22 @@ import { modify as partialModify } from './base';
 import { StateKeys } from './constants';
 
 import { getItem } from '../services/capi';
-import { simulateNetwork } from '../util/test-data';
 
 export function content(app) {
     const modify = partialModify(app);
 
     return {
-        needsEnrichment: (before, after) => {
+        enrichFromCache: (cache, results) => {
+            return results.map(result => {
+                if(result && cache.hasOwnProperty(result.id)) {
+                    return cache[result.id];
+                }
+    
+                return result;
+            });
+        },
+
+        cacheRequiresUpdate: (before, after) => {
             // contentSearch.results and editor.thePackage.content depend on the content cache
             const resultsBefore = before[StateKeys.CONTENT_SEARCH].results;
             const resultsAfter = after[StateKeys.CONTENT_SEARCH].results;
@@ -21,7 +30,7 @@ export function content(app) {
             return !isEqual(resultsBefore, resultsAfter) || !isEqual(contentBefore, contentAfter);
         },
 
-        enrich: (state) => {
+        updateCache: (state) => {
             const cache = Object.assign({}, state[StateKeys.CONTENT]);
             const editor = state[StateKeys.EDITOR];
             const contentSearch = state[StateKeys.CONTENT_SEARCH];
@@ -35,12 +44,12 @@ export function content(app) {
 
             results.forEach(({ id }) => {
                 if(!cache.hasOwnProperty(id)) {
-                    simulateNetwork(true).then(() => {
+                    getItem(id).then(content => {
                         console.log(id);
-
+                        
                         modify(StateKeys.CONTENT, before => {
                             const after = Object.assign({}, before);
-                            after[id] = true;
+                            after[id] = content;
 
                             return after;
                         });
