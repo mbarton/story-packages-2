@@ -16,12 +16,11 @@ export function contentSearch(app) {
         },
 
         search: () => {
-            const { text, results } = app.state[StateKeys.CONTENT_SEARCH];
-
-            update(StateKeys.CONTENT_SEARCH, { loading: true, text, results });
+            const { text } = app.state[StateKeys.CONTENT_SEARCH];
+            update(StateKeys.CONTENT_SEARCH, { loading: true });
 
             getLatestItems(text).then(results => {
-                update(StateKeys.CONTENT_SEARCH, { loading: false, text, results });
+                update(StateKeys.CONTENT_SEARCH, { loading: false, results });
             });
         }
     }

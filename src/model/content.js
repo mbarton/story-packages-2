@@ -1,12 +1,13 @@
 import isEqual from 'lodash.isequal';
 
-import { modify as partialModify } from './base';
+import { modify as partialModify, set as partialSet } from './base';
 import { StateKeys } from './constants';
 
 import { getItem } from '../services/capi';
 
 export function content(app) {
     const modify = partialModify(app);
+    const set = partialSet(app);
 
     return {
         enrichFromCache: (cache, results) => {
@@ -41,6 +42,20 @@ export function content(app) {
 
             if(results.length === 0)
                 return;
+
+            const afterRemoved = Object.assign({}, cache);
+            let anyRemoved = false;
+
+            Object.keys(cache).forEach(id => {
+                if(!results.some(r => r.id === id)) {
+                    anyRemoved = true;
+                    delete afterRemoved[id];
+                }
+            });
+
+            if(anyRemoved) {
+                set(StateKeys.CONTENT, afterRemoved);
+            }
 
             results.forEach(({ id }) => {
                 if(!cache.hasOwnProperty(id)) {
