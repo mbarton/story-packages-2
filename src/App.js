@@ -3,6 +3,7 @@ import { Container, Grid } from 'semantic-ui-react';
 import { DragDropContext } from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
 import { BrowserRouter, Route } from 'react-router-dom';
+import debounce from 'lodash.debounce';
 
 import { ContentSearch } from './components/ContentSearch';
 import { PackageSearch } from './components/PackageSearch';
@@ -31,6 +32,8 @@ class App extends Component {
     this.contentSearch = contentSearchModel(this);
     this.content = contentModel(this);
     this.dragging = draggingModel(this);
+
+    this.doSearch = debounce(() => this.contentSearch.search(), 250);
   }
 
   componentDidMount() {
@@ -54,6 +57,11 @@ class App extends Component {
     }
   }
 
+  onSearchChange = (query) => {
+    this.contentSearch.setSearch(query);
+    this.doSearch();
+  }
+
   render() {
     const cache = this.state[StateKeys.CONTENT];
     const editor = this.state[StateKeys.EDITOR];
@@ -62,7 +70,7 @@ class App extends Component {
     const contentSearch = this.state[StateKeys.CONTENT_SEARCH];
     const packageSearch = this.state[StateKeys.PACKAGE_SEARCH];
 
-    const contentResults = this.content.enrichFromCache(cache, contentSearch.results);
+    const enrichedResults = this.content.enrichFromCache(cache, contentSearch.results);
     
     let thePackage = editor.thePackage;
     if(thePackage) {
@@ -78,8 +86,10 @@ class App extends Component {
             <Grid.Row>
               <Grid.Column width={5}>
                 <ContentSearch
-                  loading={contentSearch.loading}
-                  results={contentResults}
+                  {...contentSearch}
+                  results={enrichedResults}
+                  onSearchChange={this.onSearchChange}
+                  onTypeChange={this.contentSearch.setType}
                   onDragStart={this.dragging.startDrag(false)} // not initially over package editor
                 />
               </Grid.Column>

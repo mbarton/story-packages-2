@@ -23,6 +23,7 @@ ContentSearch: {
     orderBy: Newest | Relevance, # TODO MRB: encode this in type system
     sliceType: None | Section | Tag,
     slice: String,
+    text: String,
     page: Int,
     pages: Int,
     results: List[ID]

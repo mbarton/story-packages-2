@@ -9,3 +9,9 @@ export const StateKeys = {
 export const DragType = {
     CONTENT: "content"
 }
+
+export const ContentSearchType = {
+    DRAFT: "draft",
+    LIVE: "live",
+    MOST_READ: "most_read"
+}

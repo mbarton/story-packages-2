@@ -10,9 +10,17 @@ function getTone(item) {
     return item.sectionName;
 }
 
-export function getLatestItems() {
+export function getLatestItems(text) {
+    const params = [
+        "page-size=20", "order-by=newest", "show-fields=internalShortId"
+    ];
+
+    if(text) {
+        params.push(`q=${encodeURIComponent(text)}`);
+    }
+
     // TODO MRB: should really be composer id instead?
-    return fetch(`${ROOT}/search?page-size=20&order-by=newest&show-fields=internalShortId`)
+    return fetch(`${ROOT}/search?${params.join("&")}`)
         .then(r => r.json())
         .then(({ response }) => {
             const { results } = response;

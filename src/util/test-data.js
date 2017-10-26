@@ -1,3 +1,5 @@
+import { ContentSearchType } from '../model/constants';
+
 function content(n) {
     return { id: n };
 }
@@ -19,6 +21,8 @@ export const TEST_PACKAGES = [
 
 export const TEST_DATA = {
     contentSearch: {
+        type: ContentSearchType.LIVE,
+        text: "",
         loading: true,
         results: []
     },

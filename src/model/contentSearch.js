@@ -7,11 +7,21 @@ export function contentSearch(app) {
     const update = partialUpdate(app);
 
     return {
-        search: () => {
-            update(StateKeys.CONTENT_SEARCH, { loading: true });
+        setType: (type) => {
+            update(StateKeys.CONTENT_SEARCH, { type });
+        },
 
-            getLatestItems().then(results => {
-                update(StateKeys.CONTENT_SEARCH, { loading: false, results });
+        setSearch: (text) => {
+            update(StateKeys.CONTENT_SEARCH, { text });
+        },
+
+        search: () => {
+            const { text, results } = app.state[StateKeys.CONTENT_SEARCH];
+
+            update(StateKeys.CONTENT_SEARCH, { loading: true, text, results });
+
+            getLatestItems(text).then(results => {
+                update(StateKeys.CONTENT_SEARCH, { loading: false, text, results });
             });
         }
     }
