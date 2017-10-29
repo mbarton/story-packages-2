@@ -7,15 +7,18 @@ import { Packages } from '../model/package';
 @observer
 export class PackageSearch extends React.Component<{ packages: Packages }, {}> {
     render() {
-        const { packages } = this.props;
+        const { query, loading, results, setQuery } = this.props.packages;
 
         return (
             <Segment>
                 <Input
-                    value={packages.query}
-                    onChange={e => packages.setQuery((e.target as HTMLInputElement).value)}
+                    value={query}
+                    loading={loading}
+                    onChange={e => setQuery((e.target as HTMLInputElement).value)}
                 />
-                {packages.query}
+                {results.map(({ id, title }) =>
+                    <span key={id}>{title}</span>
+                )}
             </Segment>
         );
     }
