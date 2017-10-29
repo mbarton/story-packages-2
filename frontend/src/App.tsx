@@ -4,22 +4,19 @@ import { BrowserRouter, Route } from 'react-router-dom';
 import { Container, Grid } from 'semantic-ui-react';
 
 import { Packages } from './model/package';
+import { ContentSearch } from './model/contentSearch';
 
 import { PackageSearch } from './components/PackageSearch';
-import { PackageEditor } from './components/PackageEditor';
+import { Editor } from './components/Editor';
+import { ContentSearch as ContentSearchView } from './components/ContentSearch';
 
 import 'semantic-ui-css/semantic.min.css';
 
 useStrict(true);
 
 class App extends React.Component<{}, {}> {
-  packages: Packages;
-
-  constructor(props: {}) {
-    super(props);
-
-    this.packages = new Packages();
-  }
+  packages: Packages = new Packages();
+  contentSearch: ContentSearch = new ContentSearch();
 
   render() {
     return (
@@ -28,7 +25,7 @@ class App extends React.Component<{}, {}> {
           <Grid columns={2}>
             <Grid.Row>
               <Grid.Column width={5}>
-                left
+                <ContentSearchView model={this.contentSearch} />
               </Grid.Column>
               <Grid.Column width={11}>
                 <Route
@@ -37,7 +34,7 @@ class App extends React.Component<{}, {}> {
                 />
                 <Route
                   path="/packages/:id"
-                  render={({ match }) => <PackageEditor packageId={match.params.id} packages={this.packages} />}
+                  render={({ match }) => <Editor packageId={match.params.id} packages={this.packages} />}
                 />
               </Grid.Column>
             </Grid.Row>

@@ -3,18 +3,24 @@ import { History } from 'history';
 
 import { getPackage, createPackage, searchPackages } from '../services/packages';
 
+export const PACKAGE_SIZE = 9;
+
+export interface PackageSearchResult {
+    id: string;
+    title: string;
+}
+
 export interface Package {
     id: string;
     title: string;
-    lastModifiedTime: number;
-    lastModifiedBy: string;
-    content: string[];
+    // TODO MRB: last modified
+    content: (string | null)[];
 }
 
 export class Packages {
     @observable query: string = '';
     @observable loading: boolean = false;
-    @observable results: Package[] = [];
+    @observable results: PackageSearchResult[] = [];
 
     @observable packageId: string = '';
     @observable thePackage: Package | null = null;
