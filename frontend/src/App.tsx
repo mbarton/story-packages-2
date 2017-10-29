@@ -1,10 +1,12 @@
 import * as React from 'react';
 import { useStrict } from 'mobx';
-import { BrowserRouter, Route } from 'react-router-dom';
+import { Provider } from 'mobx-react';
+import { Route, withRouter, RouteComponentProps } from 'react-router-dom';
 import { Container, Grid } from 'semantic-ui-react';
 
 import { Packages } from './model/package';
 import { ContentSearch } from './model/contentSearch';
+import { Dragging } from './model/dragging';
 
 import { PackageSearch } from './components/PackageSearch';
 import { Editor } from './components/Editor';
@@ -14,13 +16,14 @@ import 'semantic-ui-css/semantic.min.css';
 
 useStrict(true);
 
-class App extends React.Component<{}, {}> {
-  packages: Packages = new Packages();
+class App extends React.Component<RouteComponentProps<{}>, {}> {
+  packages: Packages = new Packages(this.props.history);
   contentSearch: ContentSearch = new ContentSearch();
+  dragging: Dragging = new Dragging(this.packages);
 
   render() {
     return (
-      <BrowserRouter>
+      <Provider packages={this.packages} dragging={this.dragging}>
         <Container fluid={true}>
           <Grid columns={2}>
             <Grid.Row>
@@ -30,7 +33,7 @@ class App extends React.Component<{}, {}> {
               <Grid.Column width={11}>
                 <Route
                   path="/"
-                  render={({ history }) => <PackageSearch packages={this.packages} history={history} />}
+                  render={({ history }) => <PackageSearch packages={this.packages} />}
                 />
                 <Route
                   path="/packages/:id"
@@ -40,9 +43,9 @@ class App extends React.Component<{}, {}> {
             </Grid.Row>
           </Grid>
         </Container>
-      </BrowserRouter>
+      </Provider>
     );
   }
 }
 
-export default App;
+export default withRouter<{}>(App);

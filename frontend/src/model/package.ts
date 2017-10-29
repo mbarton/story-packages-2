@@ -17,7 +17,32 @@ export interface Package {
     content: (string | null)[];
 }
 
+function insertOrReplace(sourceIx: number | null, destinationIx: number, content: string, before: (string | null)[]) {
+    const after = before.slice();
+    after[destinationIx] = content;
+
+    if(sourceIx !== null) {
+        // swapperroo
+        after[sourceIx] = before[destinationIx];
+    } else {
+        // bumperroo
+        if(before[destinationIx] !== null) {
+            for(let i = destinationIx; i < before.length; i++) {
+                if(before[i] === null) {
+                    break;
+                }
+    
+                after[i + 1] = before[i];
+            }
+        }
+    }
+
+    return after;
+}
+
 export class Packages {
+    history: History;
+
     @observable query: string = '';
     @observable loading: boolean = false;
     @observable results: PackageSearchResult[] = [];
@@ -25,7 +50,9 @@ export class Packages {
     @observable packageId: string = '';
     @observable thePackage: Package | null = null;
 
-    constructor() {
+    constructor(history: History) {
+        this.history = history;
+
         autorunAsync(() => this.search(this.query), 500);
     }
 
@@ -44,7 +71,7 @@ export class Packages {
         this.query = query;
     }
 
-    @action createPackage = (title: string, history: History) => {
+    @action createPackage = (title: string) => {
         this.loading = true;
 
         createPackage(title).then(thePackage => {
@@ -52,12 +79,12 @@ export class Packages {
                 this.loading = false;
 
                 this.thePackage = thePackage;
-                history.push(`/packages/${thePackage.id}`);
+                this.history.push(`/packages/${thePackage.id}`);
             });
         });
     }
 
-    @action setPackage = (id: string, history: History) => {
+    @action setPackage = (id: string) => {
         this.packageId = id;
 
         const existing = this.thePackage ? this.thePackage.id : '';
@@ -71,10 +98,21 @@ export class Packages {
 
                     if(thePackage) {
                         this.thePackage = thePackage;
-                        history.push(`/packages/${thePackage.id}`);
+                        this.history.push(`/packages/${thePackage.id}`);
                     }
                 });  
             });
         }
+    }
+
+    @action insertPackage = (id: string, ix: number) => {
+        if(this.thePackage) {
+            const before = this.thePackage.content;
+            const after = insertOrReplace(null, ix, id, before);
+
+            this.thePackage = Object.assign({}, this.thePackage, { content: after });
+        }
+
+        console.log(`insert ${ix} at ${id}`);
     }
 }

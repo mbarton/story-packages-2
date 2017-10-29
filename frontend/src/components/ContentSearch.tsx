@@ -3,6 +3,7 @@ import { observer } from 'mobx-react';
 import { Segment, Input } from 'semantic-ui-react';
 
 import { ContentSearch as Model } from '../model/contentSearch';
+import { Content } from './Content';
 
 @observer
 export class ContentSearch extends React.Component<{ model: Model}, {}> {
@@ -25,7 +26,7 @@ export class ContentSearch extends React.Component<{ model: Model}, {}> {
                 </Segment>
                 {model.content.map(id => {
                     return <Segment key={id}>
-                        {id}
+                        <Content id={id} />
                     </Segment>;
                 })}
             </Segment.Group>

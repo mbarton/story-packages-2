@@ -1,9 +1,10 @@
 import { PackageSearchResult, Package, PACKAGE_SIZE } from '../model/package';
 
-import { getPackages } from './capi';
+import { LocalCache } from './cache';
+import { searchPackages as searchCapiForPackages } from './capi';
 
 // TOTALLY LEGIT HACK!! Remember titles since we don't yet have a backend
-const cache: Map<string, Package> = new Map();
+const cache: LocalCache<string, Package> = new LocalCache('test-story-packages');
 
 function empty(): (string | null)[] {
     const ret: (string | null)[] = [];
@@ -16,7 +17,7 @@ function empty(): (string | null)[] {
 }
 
 export function searchPackages(query: string): Promise<PackageSearchResult[]> {
-    return getPackages(query).then(packages => {
+    return searchCapiForPackages(query).then(packages => {
         packages.forEach(thePackage => {
             if(!cache.has(thePackage.id)) {
                 const entry = Object.assign({}, thePackage, { content: empty() });
@@ -26,7 +27,7 @@ export function searchPackages(query: string): Promise<PackageSearchResult[]> {
 
         const cached: Package[] = [];
 
-        cache.forEach(thePackage => {
+        cache.getAll().forEach(thePackage => {
             if(!packages.some(p => p.id === thePackage.id)) {
                 cached.push(thePackage);
             }

@@ -1,8 +1,10 @@
 import * as React from 'react';
-import { observer } from 'mobx-react';
+import { observer, inject } from 'mobx-react';
 import { Segment, Grid } from 'semantic-ui-react';
 
 import { Packages, PACKAGE_SIZE } from '../model/package';
+import { Dragging } from '../model/dragging';
+import { Container } from './Container';
 
 interface IndexedItem {
     ix: number;
@@ -35,7 +37,9 @@ function Squares({ rows }: { rows: IndexedItem[][] }) {
             {rows.map((row, rowIx) =>
                 <Grid.Row key={rowIx} width={row.length}>
                     {row.map(({ content, ix }, columnIx) =>
-                        <Grid.Column key={columnIx}>{ix}</Grid.Column>
+                        <Grid.Column key={columnIx}>
+                            <Container ix={ix} id={content} />
+                        </Grid.Column>
                     )}
                 </Grid.Row>
             )}
@@ -43,13 +47,28 @@ function Squares({ rows }: { rows: IndexedItem[][] }) {
     );
 }
 
+interface Props {
+    packageId: string;
+    packages?: Packages;
+    dragging?: Dragging;
+}
+
+@inject('packages', 'dragging')
 @observer
-export class Editor extends React.Component<{ packageId: string, packages: Packages }, {}> {
+export class Editor extends React.Component<Props, {}> {
+    componentDidMount() {
+        const { packageId, packages } = this.props;
+
+        if(packages && !packages.thePackage) {
+           packages.setPackage(packageId);
+        }
+    }
+
     render() {
-        const thePackage = this.props.packages.thePackage;
+        const { dragging } = this.props;
         
-        if(thePackage) {
-            const indexed: IndexedItem[] = thePackage.content.map((content, ix) => { return { content, ix }; });
+        if(dragging) {
+            const indexed: IndexedItem[] = dragging.items.map((content, ix) => { return { content, ix }; });
             const included = layoutInRows(indexed.slice(0, PACKAGE_SIZE));
             const linkingTo = layoutInRows(indexed.slice(0, PACKAGE_SIZE));
 

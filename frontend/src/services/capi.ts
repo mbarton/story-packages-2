@@ -26,7 +26,7 @@ export function getContent(query: string): Promise<string[]> {
         }));
 }
 
-export function getPackages(query: string): Promise<PackageSearchResult[]> {
+export function searchPackages(query: string): Promise<PackageSearchResult[]> {
     const params = `api-key=${apiKey}${query !== '' ? `&q=${query}` : ''}`;
     const url = `${root}/packages?${params}`;
 
