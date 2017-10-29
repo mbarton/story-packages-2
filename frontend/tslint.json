@@ -1,12 +1,6 @@
 {
     "extends": ["tslint-react"],
     "rules": {
-        "align": [
-            true,
-            "parameters",
-            "arguments",
-            "statements"
-        ],
         "ban": false,
         "class-name": true,
         "comment-format": [
@@ -84,16 +78,6 @@
                 "variable-declaration": "nospace"
             }
         ],
-        "variable-name": [true, "ban-keywords", "check-format", "allow-leading-underscore", "allow-pascal-case"],
-        "whitespace": [
-            true,
-            "check-branch",
-            "check-decl",
-            "check-module",
-            "check-operator",
-            "check-separator",
-            "check-type",
-            "check-typecast"
-        ]
+        "variable-name": [true, "ban-keywords", "check-format", "allow-leading-underscore", "allow-pascal-case"]
     }
 }

@@ -1,11 +1,12 @@
 import * as React from 'react';
 import { useStrict } from 'mobx';
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter, Route } from 'react-router-dom';
 import { Container, Grid } from 'semantic-ui-react';
 
 import { Packages } from './model/package';
 
 import { PackageSearch } from './components/PackageSearch';
+import { PackageEditor } from './components/PackageEditor';
 
 import 'semantic-ui-css/semantic.min.css';
 
@@ -30,7 +31,14 @@ class App extends React.Component<{}, {}> {
                 left
               </Grid.Column>
               <Grid.Column width={11}>
-                <PackageSearch packages={this.packages} />
+                <Route
+                  path="/"
+                  render={({ history }) => <PackageSearch packages={this.packages} history={history} />}
+                />
+                <Route
+                  path="/packages/:id"
+                  render={({ match }) => <PackageEditor packageId={match.params.id} packages={this.packages} />}
+                />
               </Grid.Column>
             </Grid.Row>
           </Grid>
